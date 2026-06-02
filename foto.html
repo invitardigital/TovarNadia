@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flexslider@2.7.2/flexslider.css">
+    <link rel="stylesheet" href="awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+
+    <link rel="stylesheet" type="text/css" href="util.css?sadadad">
+    <link rel="stylesheet" type="text/css" href="filter.css">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+
+
+</head>
+
+<body class="m_0 bg_red_true" style="overflow: auto;">
+
+
+
+
+
+    <div class="protector bg_black d-none" id="protector">
+        <center class="protector-centrado bg_white p_20 rounded box_shadow_dark">
+            <h3 class="font_paris m_0">Gracias por Compartir<br> este Momento conmigo!</h3>
+        </center>
+    </div>
+    
+
+
+
+<button id="btnTomar" class="d-none"></button>
+<h2 class="text_center font_paris m_0 pb_10 pt_15 color_white">📸 Tomar Foto 📸</h2>
+<button class="font_paris fspx_30 ml_10 my_btn bg_white py_0 px_10 rounded color_black d_block my_10 text_shadow_dark no_link" id="btnOtra"
+     style="position: absolute; z-index: 100;">
+    <i class="fa fa-refresh mt_10" aria-hidden="true"></i>
+</button>
+
+<div class="bg_black w_100  ">
+    <video id="camara" autoplay playsinline style="width: 100%; height: auto;"></video>
+</div>
+
+<div class="bg_red_true">
+    <center class="m_0a d_block max_wpx_700 color_black">
+        <button href="#" class="font_paris fspx_30 my_btn bg_white py_0 px_10 rounded color_black d_block w_100 my_10 text_shadow_dark no_link"
+                data-bs-toggle="modal" data-bs-target="#PaseModaQR" id="btnFoto">
+            <i class="fa fa-camera mr_10" aria-hidden="true"></i><span>Tomar Foto</span>
+        </button>
+    </center>
+</div>
+
+
+<!-- Vista previa -->
+<canvas id="preview" style="display:none;"></canvas>
+<img id="fotoPreview" class="w_100" style="display:none;"/>
+
+<div class="bg_red_true" >
+    <center class="m_0a d_block max_wpx_700 color_black">
+        <button href="#" class="font_paris fspx_30 my_btn bg_white py_0 px_10 rounded color_black d_block w_100 my_10 text_shadow_dark no_link"
+                data-bs-toggle="modal" data-bs-target="#PaseModaQR" id="btnSubir" style="display:none;">
+            <i class="fa fa-floppy-o" aria-hidden="true"></i><span> Subir Foto</span>
+        </button>
+    </center>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flexslider@2.7.2/jquery.flexslider-min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/countdown/2.6.0/countdown.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/qr-scanner/qr-scanner.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+
+
+
+<script>
+
+const API_URL = 'https://www.ztart.mx/';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkZ29tbW5sa3RpaWRmYmN2eGh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3NDIwODcsImV4cCI6MjA3ODMxODA4N30.K5zdBMVCt65O-EEqEu-HKFdMIcUreJeE9YPWkYxCyog';
+const CLIENTE_ID = "8";
+const SUPABASE_BUCKET = "fotos1";
+
+const video = document.getElementById("camara");
+const canvas = document.getElementById("preview");
+const fotoPreview = document.getElementById("fotoPreview");
+const btnFoto = document.getElementById("btnFoto");
+const btnSubir = document.getElementById("btnSubir");
+const btnOtra = document.getElementById("btnOtra"); // asegúrate que exista en HTML
+
+let stream = null;
+let useFrontCamera = true; // true = frontal, false = trasera
+
+
+let rotation = 0;
+
+window.addEventListener("deviceorientation", (event) => {
+    const gamma = event.gamma; // inclinación izquierda/derecha
+    const beta = event.beta;   // inclinación adelante/atrás
+
+    if (Math.abs(beta) > Math.abs(gamma)) {
+        rotation = 0; // vertical
+    } else if (gamma > 0) {
+        rotation = 90; // landscape derecha
+    } else {
+        rotation = -90; // landscape izquierda
+    }
+});
+
+
+async function iniciarCamara() {
+    try {
+        // Detener cualquier stream anterior
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+
+        // Solicitar la cámara correcta
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: useFrontCamera ? "user" : "environment" },
+            audio: false
+        });
+
+        video.srcObject = stream;
+        await video.play();
+
+        // Aplicar efecto espejo si es frontal
+        if (useFrontCamera) {
+            video.style.transform = "scaleX(-1)";
+        } else {
+            video.style.transform = "scaleX(1)";
+        }
+
+
+    } catch (err) {
+        console.error("No se pudo abrir la cámara:", err);
+        //alert("No se pudo acceder a la cámara. Revisa que tu navegador tenga permisos y que tu dispositivo tenga la cámara.");
+    }
+}
+
+// Cambiar cámara
+btnOtra.onclick = () => {
+    useFrontCamera = !useFrontCamera;
+    iniciarCamara();
+};
+
+
+
+
+
+
+
+
+
+
+
+btnFoto.onclick = () => {
+    const ctx = canvas.getContext("2d");
+    let w = video.videoWidth;
+    let h = video.videoHeight;
+
+    // Ajustar dimensiones del canvas según rotación
+    if (Math.abs(rotation) === 90) {
+        canvas.width = h;
+        canvas.height = w;
+    } else {
+        canvas.width = w;
+        canvas.height = h;
+    }
+
+    ctx.save();
+    
+    // Mover el origen al centro del canvas para rotaciones más precisas
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+
+    // Aplicar rotación PRIMERO
+    if (rotation === 90) {
+        ctx.rotate(Math.PI / 2);
+    } else if (rotation === -90) {
+        ctx.rotate(-Math.PI / 2);
+    }
+
+    // Aplicar espejo para cámara frontal DESPUÉS de rotar
+    if (useFrontCamera) {
+        ctx.scale(-1, 1);
+    }
+
+    // Dibujar el video centrado (compensando el translate inicial)
+    if (Math.abs(rotation) === 90) {
+        // En landscape, las dimensiones están invertidas
+        ctx.drawImage(video, -w / 2, -h / 2, w, h);
+    } else {
+        // En portrait
+        ctx.drawImage(video, -w / 2, -h / 2, w, h);
+    }
+
+    ctx.restore();
+
+    // Mostrar preview
+    fotoPreview.src = canvas.toDataURL("image/jpeg", 0.95);
+    fotoPreview.style.transform = "none"; // No aplicar transform al preview
+    fotoPreview.style.display = "block";
+    btnSubir.style.display = "inline-block";
+
+    // Scroll automático al preview
+    fotoPreview.onload = () => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    };
+};
+
+
+
+
+
+
+
+
+// Subir foto
+
+btnSubir.onclick = async () => {
+    // Convertir canvas a blob (imagen final que se ve en el preview)
+    $("#protector").removeClass("d-none");
+
+    canvas.toBlob(async (blob) => {
+        const formData = new FormData();
+        formData.append("foto", blob, "foto.jpg");
+        formData.append("cliente_id", CLIENTE_ID);
+        formData.append("SUPABASE_BUCKET", SUPABASE_BUCKET);
+        formData.append("SUPABASE_KEY", SUPABASE_KEY);
+
+        const res = await fetch(API_URL+"fotos", { method: "POST", body: formData });
+
+        console.log(res);
+
+        /*setTimeout(() => {
+           window.location.href = 'index.html';
+        }, 5000);*/
+
+    }, "image/jpeg", 0.95);
+
+};
+
+
+iniciarCamara();
+
+</script>
+
+
+</body>
+</html>
