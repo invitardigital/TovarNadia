@@ -1,11 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>⚡ Studio Gallery Ultra-Pro</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
@@ -45,11 +46,14 @@
 </head>
 <body class="bg-darkBg text-gray-100 font-sans min-h-screen antialiased selection:bg-brand-500">
 
+    <!-- CONTENEDOR DE TOASTS FLOTANTES -->
     <div id="toastContainer" class="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-sm z-50 flex flex-col gap-2.5 pointer-events-none"></div>
 
+    <!-- HEADER PREMIUM -->
     <header class="sticky top-0 z-40 bg-zinc-950/80 backdrop-blur-lg border-b border-zinc-800/40 px-4 py-3.5">
         <div class="max-w-7xl mx-auto flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between">
             
+            <!-- Navegación Izquierda -->
             <div class="flex items-center gap-4 min-w-0">
                 <div class="flex items-center gap-2.5">
                     <span class="text-brand-500 flex-shrink-0 drop-shadow-[0_0_10px_rgba(244,63,94,0.35)]">
@@ -70,6 +74,7 @@
                 </div>
             </div>
 
+            <!-- BARRA DE PROGRESO DE CUOTA (HASTA 1,000) -->
             <div class="flex flex-col gap-1 w-full sm:w-64 bg-zinc-900/30 border border-zinc-800/40 rounded-xl p-2">
                 <div class="flex items-center justify-between text-[10px] font-mono tracking-tight px-0.5">
                     <span class="text-zinc-400 uppercase">Progreso</span>
@@ -83,8 +88,10 @@
         </div>
     </header>
 
+    <!-- CONTENEDOR PRINCIPAL -->
     <main class="max-w-7xl mx-auto px-4 py-6">
         
+        <!-- BARRA DE ACCIONES -->
         <div class="flex items-center justify-between gap-4 mb-6 bg-zinc-900/20 p-2 rounded-2xl border border-zinc-800/30">
             <div class="flex gap-1.5 bg-zinc-950 p-1 rounded-xl border border-zinc-800/80 text-sm w-full sm:w-auto">
                 <button onclick="filtrar(this, 'todos')" class="filter-btn flex-1 sm:flex-initial px-5 py-2.5 rounded-lg font-bold transition-all bg-brand-500 text-white shadow-md shadow-brand-500/10">
@@ -100,6 +107,7 @@
             </button>
         </div>
 
+        <!-- APP STATES -->
         <div id="loadingGaleria" class="hidden flex-col items-center justify-center py-32">
             <i data-lucide="loader" class="w-8 h-8 text-brand-500 spinning mb-3"></i>
             <p class="text-xs text-zinc-500 font-mono tracking-widest uppercase">Leyendo Base de Datos...</p>
@@ -116,14 +124,17 @@
             <button onclick="cargarFotos()" class="px-5 py-2.5 bg-brand-500 font-bold text-xs rounded-xl shadow-lg active:scale-95 transition-all">Sincronizar Canal</button>
         </div>
 
+        <!-- GRID DE IMÁGENES -->
         <div id="galleryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
     </main>
 
+    <!-- VISOR LIGHTBOX -->
     <div id="customLightbox" class="fixed inset-0 z-50 bg-black opacity-0 pointer-events-none transition-opacity duration-350 flex flex-col justify-between hidden select-none">
         
+        <!-- Top Bar -->
         <div class="w-full flex justify-between items-center px-4 py-4 bg-gradient-to-b from-black via-black/85 to-transparent z-10">
             <div class="min-w-0 flex-1 pr-4">
-                <h4 id="lightboxTitle" class="font-bold text-sm text-gray-200 truncate font-mono">Foto</h4>
+                <h4 id="lightboxTitle" class="font-bold text-sm text-gray-200 truncate font-mono">Visualizador</h4>
                 <p id="lightboxCounter" class="text-xs text-zinc-500 font-mono mt-0.5">0 / 0</p>
             </div>
             <div class="flex items-center gap-2">
@@ -136,21 +147,25 @@
             </div>
         </div>
 
+        <!-- Área de visualización central -->
         <div class="flex-1 w-full flex items-center justify-center p-3 relative min-h-0 bg-black">
             <img id="lightboxImg" src="" alt="Preview" class="max-w-full max-h-[66vh] object-contain rounded-xl shadow-2xl transition-all duration-200 animate-[mobileEntry_0.25s_ease-out]">
         </div>
 
+        <!-- Botonera de Control Inferior -->
         <div class="w-full bg-gradient-to-t from-black via-black/95 to-transparent pt-6 pb-8 px-4 flex flex-col gap-4">
-            <div id="lightboxFooterDetails" class="text-center text-[10px] font-mono text-zinc-600 truncate px-4">
-                -
-            </div>
-
+            
             <div class="flex items-center justify-between max-w-sm mx-auto w-full gap-3">
                 <button onclick="changeLightboxSlide(-1)" class="py-4 bg-zinc-900/90 active:bg-zinc-800 text-white rounded-2xl border border-zinc-800/80 flex-1 flex justify-center shadow-xl">
                     <i data-lucide="chevron-left" class="w-6 h-6"></i>
                 </button>
                 
-                <button onclick="eliminarDesdeLightbox()" class="py-4 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-2xl border border-red-500/20 active:scale-95 transition-all px-7 flex justify-center shadow-lg" title="Eliminar">
+                <!-- Botón descargar desde Lightbox -->
+                <button onclick="descargarDesdeLightbox()" class="py-4 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-2xl border border-emerald-500/20 active:scale-95 transition-all px-5 flex justify-center shadow-lg" title="Descargar Imagen">
+                    <i data-lucide="download" class="w-6 h-6"></i>
+                </button>
+
+                <button onclick="eliminarDesdeLightbox()" class="py-4 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-2xl border border-red-500/20 active:scale-95 transition-all px-5 flex justify-center shadow-lg" title="Eliminar">
                     <i data-lucide="trash-2" class="w-6 h-6"></i>
                 </button>
 
@@ -161,6 +176,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE SEGURIDAD -->
     <div id="passwordModal" class="fixed inset-0 z-50 bg-black/96 backdrop-blur-xl flex items-center justify-center hidden opacity-0 transition-opacity duration-200 p-4 select-none">
         <div class="bg-zinc-900 border border-zinc-800/80 p-6 rounded-2xl max-w-sm w-full shadow-[0_0_50px_rgba(0,0,0,0.8)] transform scale-95 transition-transform duration-200" id="passwordBox">
             
@@ -182,6 +198,7 @@
         </div>
     </div>
 
+    <!-- SCRIPT CORE INTEGRADO -->
     <script>
         const API_URL = 'https://ztart.mx/fotos';
         const CLIENTE_ID = "40";
@@ -291,8 +308,10 @@
                         <img src="${escapeHtml(imgUrl)}" loading="lazy" alt="Gallery item" class="w-full h-full object-cover" onerror="this.closest('.grid-item').remove()">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
                     </div>
-                    <div class="absolute bottom-2 left-2 right-2 flex justify-between items-center pointer-events-none">
-                        <span class="bg-zinc-950/90 text-zinc-400 text-xs font-mono px-2 py-0.5 rounded-md border border-zinc-800/80">#${fotoId}</span>
+                    <div class="absolute bottom-2 left-2 right-2 flex justify-end items-center gap-1.5 pointer-events-none">
+                        <button onclick="event.stopPropagation(); forzarDescarga('${escapeHtml(imgUrl)}', ${fotoId})" class="p-2 bg-zinc-900/90 text-emerald-400 rounded-xl pointer-events-auto border border-zinc-800/60 shadow-md active:scale-90 transition-transform" title="Descargar">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                        </button>
                         <button onclick="event.stopPropagation(); requestDelete(${fotoId})" class="p-2 bg-brand-500 text-white rounded-xl pointer-events-auto shadow-md active:scale-90 transition-transform" title="Eliminar">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
@@ -353,9 +372,8 @@
             const imgUrl = currentFoto.name || currentFoto.url || currentFoto.src || '';
             document.getElementById('lightboxImg').src = imgUrl;
 
-            document.getElementById('lightboxTitle').textContent = `ID ARCHIVO #${currentFoto.id || currentLightboxIndex}`;
+            document.getElementById('lightboxTitle').textContent = `Visualizador Premium`;
             document.getElementById('lightboxCounter').textContent = `${currentLightboxIndex + 1} / ${targetFotos.length}`;
-            document.getElementById('lightboxFooterDetails').textContent = imgUrl;
         }
 
         function toggleFullscreen() {
@@ -371,6 +389,41 @@
                 document.exitFullscreen();
                 icon.setAttribute('data-lucide', 'maximize');
                 lucide.createIcons();
+            }
+        }
+
+        function descargarDesdeLightbox() {
+            let targetFotos = [...fotosData];
+            if (filtroActual === 'recientes') targetFotos.sort((a, b) => (b.id || 0) - (a.id || 0));
+            
+            const currentFoto = targetFotos[currentLightboxIndex];
+            if (currentFoto) {
+                const imgUrl = currentFoto.name || currentFoto.url || currentFoto.src || '';
+                const id = currentFoto.id || currentLightboxIndex;
+                forzarDescarga(imgUrl, id);
+            }
+        }
+
+        async function forzarDescarga(url, id) {
+            showToast('Procesando descarga de archivo...', 'info');
+            try {
+                const response = await fetch(url, { mode: 'cors' });
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = `studio-40-img-${id || Date.now()}.jpg`;
+                document.body.appendChild(link);
+                link.click();
+                
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(blobUrl);
+                showToast('Descarga iniciada.', 'success');
+            } catch (error) {
+                // Si falla CORS de origen cruzado, abre en pestaña nueva como alternativa
+                window.open(url, '_blank');
+                showToast('Descarga delegada al navegador web.', 'info');
             }
         }
 
@@ -458,17 +511,13 @@
 
         function actualizarBarraProgreso(total) {
             const totalFotos = total || 0;
-            
-            // Actualizar texto del número actual
             document.getElementById('quotaCurrentText').textContent = totalFotos;
             
-            // Calcular porcentaje respecto a las 1000 fotos máximas
             const porcentaje = Math.min((totalFotos / MAX_ABS_FOTOS) * 100, 100);
             const progressBar = document.getElementById('quotaProgressBar');
             
             progressBar.style.width = `${porcentaje}%`;
 
-            // Control de color por si se llena
             if (porcentaje >= 90) {
                 progressBar.className = "h-full bg-gradient-to-r from-red-600 to-brand-500 rounded-full transition-all duration-500";
                 showToast(`Alerta: Cupo al ${porcentaje.toFixed(0)}% de la capacidad de red.`, 'warning');
