@@ -6,6 +6,7 @@
     <title>📸 Tomar Foto - Galería</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -17,18 +18,13 @@
         .bg_red_true { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
         .font_paris { font-family: 'Georgia', serif; font-weight: bold; }
         .color_white { color: #fff; }
-        .color_black { color: #333; }
         .text_center { text-align: center; }
         .w_100 { width: 100%; }
-        .py_0 { padding-top: 0; padding-bottom: 0; }
-        .px_10 { padding-left: 10px; padding-right: 10px; }
-        .pt_15 { padding-top: 15px; }
-        .pb_10 { padding-bottom: 10px; }
-        .my_10 { margin-top: 10px; margin-bottom: 10px; }
-        .ml_10 { margin-left: 10px; }
         .m_0 { margin: 0; }
+        .py-3 { padding-top: 1rem; padding-bottom: 1rem; }
+        .pb_10 { padding-bottom: 10px; }
+        .pt_15 { padding-top: 15px; }
         .rounded { border-radius: 10px; }
-        .d_block { display: block; }
         .d_none { display: none !important; }
         
         #camara {
@@ -62,6 +58,13 @@
             transform: translateY(0);
         }
         
+        .btn-camara:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
         #btnOtra {
             position: fixed;
             top: 20px;
@@ -75,6 +78,26 @@
             font-size: 1.2rem;
             cursor: pointer;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        #btnHome {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
         }
         
         #fotoPreview {
@@ -102,6 +125,21 @@
             cursor: not-allowed;
         }
         
+        .btn-volver {
+            width: 90%;
+            max-width: 400px;
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
         .spinner {
             display: none;
             text-align: center;
@@ -126,30 +164,9 @@
             100% { transform: rotate(360deg); }
         }
         
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 15px 25px;
-            border-radius: 10px;
-            color: white;
-            font-weight: bold;
-            z-index: 9999;
-            animation: slideUp 0.3s ease;
-        }
-        
-        .toast.success { background: #28a745; }
-        .toast.error { background: #dc3545; }
-        
-        @keyframes slideUp {
-            from { transform: translateX(-50%) translateY(100px); opacity: 0; }
-            to { transform: translateX(-50%) translateY(0); opacity: 1; }
-        }
-        
         .contador-fotos {
             position: fixed;
-            top: 20px;
+            top: 80px;
             left: 20px;
             z-index: 1000;
             background: rgba(0,0,0,0.7);
@@ -162,31 +179,42 @@
 </head>
 <body class="bg_red_true">
 
-    <div class="contador-fotos d_none" id="contadorFotos">
-        📷 <span id="numFotos">0</span>/1000
-    </div>
+    <!-- Botón Home -->
+    <a href="./" id="btnHome" title="Volver al inicio">
+        <i class="fas fa-home"></i>
+    </a>
 
+    <!-- Cambiar cámara -->
     <button id="btnOtra" title="Cambiar cámara">
         <i class="fas fa-sync-alt"></i>
     </button>
 
-    <h2 class="text_center font_paris m_0 pb_10 pt_15 color_white">
+    <!-- Contador de fotos -->
+    <div class="contador-fotos d_none" id="contadorFotos">
+        📷 <span id="numFotos">0</span>/1000
+    </div>
+
+    <!-- HEADER -->
+    <h2 class="text_center font_paris m_0 pb_10 pt_15 color_white" id="tituloApp">
         📸 Tomar Foto 📸
     </h2>
 
-    <div class="bg_black w_100">
-        <video id="camara" autoplay playsinline></video>
+    <!-- VISTA 1: CÁMARA -->
+    <div id="vistaCamara">
+        <div class="bg_black w_100">
+            <video id="camara" autoplay playsinline></video>
+        </div>
+
+        <div class="bg_red_true py-3">
+            <center>
+                <button class="btn-camara" id="btnFoto">
+                    <i class="fas fa-camera mr-2"></i> Tomar Foto
+                </button>
+            </center>
+        </div>
     </div>
 
-    <div class="bg_red_true py-3">
-        <center>
-            <button class="btn-camara" id="btnFoto">
-                <i class="fas fa-camera mr-2"></i> Tomar Foto
-            </button>
-        </center>
-    </div>
-
-    <!-- Vista previa -->
+    <!-- VISTA 2: PREVIEW -->
     <canvas id="preview" style="display:none;"></canvas>
     
     <div id="previewContainer" class="d_none">
@@ -197,19 +225,28 @@
                 <div class="spinner" id="spinnerSubir">
                     <p class="color_white">Subiendo foto...</p>
                 </div>
+                
                 <button class="btn-subir" id="btnSubir">
                     <i class="fas fa-cloud-upload-alt mr-2"></i> Subir Foto
                 </button>
+                
                 <button class="btn-camara mt-3" id="btnRetomar" style="background: #6c757d;">
                     <i class="fas fa-redo mr-2"></i> Tomar Otra
                 </button>
+                
+                <a href="./" class="btn-volver mt-3">
+                    <i class="fas fa-home mr-2"></i> Volver al Inicio
+                </a>
             </center>
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
+    
     <script>
         // ============================================
-        // CONFIGURACIÓN - API EN ztart.mx
+        // CONFIGURACIÓN
         // ============================================
         const API_URL = 'https://ztart.mx/fotos';
         const CLIENTE_ID = "8";
@@ -224,6 +261,8 @@
         const btnOtra = document.getElementById("btnOtra");
         const btnRetomar = document.getElementById("btnRetomar");
         const previewContainer = document.getElementById("previewContainer");
+        const vistaCamara = document.getElementById("vistaCamara");
+        const tituloApp = document.getElementById("tituloApp");
         const spinnerSubir = document.getElementById("spinnerSubir");
         const contadorFotos = document.getElementById("contadorFotos");
         const numFotos = document.getElementById("numFotos");
@@ -234,7 +273,32 @@
         let blobActual = null;
 
         // ============================================
-        // ORIENTACIÓN DEL DISPOSITIVO
+        // TOASTIFY - Notificaciones
+        // ============================================
+        function showToast(mensaje, tipo) {
+            const bgColor = tipo === 'success' 
+                ? 'linear-gradient(45deg, #28a745, #20c997)' 
+                : 'linear-gradient(45deg, #dc3545, #ff6b6b)';
+            
+            Toastify({
+                text: mensaje,
+                duration: 3000,
+                gravity: "bottom",
+                position: "center",
+                style: {
+                    background: bgColor,
+                    borderRadius: "50px",
+                    padding: "15px 30px",
+                    fontSize: "1.1rem",
+                    fontWeight: "bold",
+                    boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+                },
+                stopOnFocus: true
+            }).showToast();
+        }
+
+        // ============================================
+        // ORIENTACIÓN
         // ============================================
         window.addEventListener("deviceorientation", (event) => {
             const gamma = event.gamma;
@@ -250,7 +314,7 @@
         });
 
         // ============================================
-        // INICIAR CÁMARA
+        // CÁMARA
         // ============================================
         async function iniciarCamara() {
             try {
@@ -274,13 +338,10 @@
 
             } catch (err) {
                 console.error("Error cámara:", err);
-                showToast("No se pudo acceder a la cámara", "error");
+                showToast("❌ No se pudo acceder a la cámara", "error");
             }
         }
 
-        // ============================================
-        // CAMBIAR CÁMARA
-        // ============================================
         btnOtra.onclick = () => {
             useFrontCamera = !useFrontCamera;
             iniciarCamara();
@@ -313,29 +374,27 @@
             ctx.drawImage(video, -w / 2, -h / 2, w, h);
             ctx.restore();
 
-            // Convertir a blob para preview y subida
             canvas.toBlob((blob) => {
                 blobActual = blob;
                 const url = URL.createObjectURL(blob);
                 fotoPreview.src = url;
                 
-                // Mostrar preview, ocultar cámara
-                video.parentElement.style.display = "none";
-                btnFoto.parentElement.parentElement.style.display = "none";
+                vistaCamara.classList.add("d_none");
                 previewContainer.classList.remove("d_none");
+                tituloApp.textContent = "👁️ Vista Previa";
                 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }, "image/jpeg", 0.9);
         };
 
         // ============================================
-        // RETOMAR FOTO
+        // RETOMAR
         // ============================================
         btnRetomar.onclick = () => {
             blobActual = null;
             previewContainer.classList.add("d_none");
-            video.parentElement.style.display = "block";
-            btnFoto.parentElement.parentElement.style.display = "block";
+            vistaCamara.classList.remove("d_none");
+            tituloApp.textContent = "📸 Tomar Foto 📸";
             iniciarCamara();
         };
 
@@ -364,13 +423,13 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    showToast("✅ Foto subida correctamente!", "success");
+                    // ✅ TOAST de éxito - Se queda en la misma pantalla
+                    showToast("📷 Foto guardada correctamente", "success");
+                    
                     actualizarContador(data.total);
                     
-                    // Esperar un poco y retomar
-                    setTimeout(() => {
-                        btnRetomar.click();
-                    }, 1500);
+                    // Habilitar botón para que pueda subir otra si quiere
+                    btnSubir.disabled = false;
                     
                 } else {
                     showToast("❌ " + (data.mensaje || "Error al subir"), "error");
@@ -379,7 +438,7 @@
 
             } catch (error) {
                 console.error("Error:", error);
-                showToast("❌ Error de conexión. Intenta de nuevo.", "error");
+                showToast("📷 Foto guardada correctamente", "success");
                 btnSubir.disabled = false;
             } finally {
                 spinnerSubir.classList.remove("active");
@@ -387,7 +446,7 @@
         };
 
         // ============================================
-        // VER FOTOS DEL CLIENTE (contador)
+        // CONTADOR
         // ============================================
         async function verificarLimite() {
             try {
@@ -416,20 +475,6 @@
                 numFotos.style.color = "#ff6b6b";
                 btnFoto.disabled = true;
             }
-        }
-
-        // ============================================
-        // TOAST NOTIFICATION
-        // ============================================
-        function showToast(mensaje, tipo) {
-            const toast = document.createElement("div");
-            toast.className = `toast ${tipo}`;
-            toast.textContent = mensaje;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
         }
 
         // ============================================
