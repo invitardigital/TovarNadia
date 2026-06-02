@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>⚡ Studio Gallery Premium</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 500: '#f43f5e' },
+                        darkBg: '#09090b',
+                        surface: '#18181b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .grid-item {
+            animation: mobileEntry 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        @keyframes mobileEntry {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .spinning { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .lock-scroll { overflow: hidden !important; height: 100vh !important; }
+    </style>
+</head>
+<body class="bg-darkBg text-gray-100 font-sans min-h-screen antialiased selection:bg-brand-500">
+
+    <!-- HEADER COMPACTO CON TEXTOS LEGIBLES -->
+    <header class="sticky top-0 z-40 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/80 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+            
+            <div class="flex items-center gap-2 min-w-0">
+                <span class="text-brand-500 flex-shrink-0"><i data-lucide="aperture" class="w-5 h-5"></i></span>
+                <h1 class="text-sm font-bold tracking-wide text-gray-100 font-mono">CLIENTE #40</h1>
+            </div>
+            
+            <!-- Bloques de contadores con texto claro y visible -->
+            <div class="flex items-center gap-2.5 bg-zinc-900 px-3 py-1.5 rounded-xl border border-zinc-800 text-xs font-mono">
+                <div>Fotos: <span id="statTotal" class="font-bold text-gray-100">-</span></div>
+                <div class="w-[1px] h-3 bg-zinc-700"></div>
+                <div>Disponibles: <span id="statDisp" class="font-bold text-emerald-400">-</span></div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- CONTENEDOR DE LA APP -->
+    <main class="max-w-7xl mx-auto px-4 py-5">
+        
+        <!-- ACCIONES Y FILTROS -->
+        <div class="flex items-center justify-between gap-4 mb-6 bg-surface/40 p-2 rounded-xl border border-zinc-800/60">
+            <div class="flex gap-1.5 bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-sm w-full sm:w-auto">
+                <button onclick="filtrar(this, 'todos')" class="filter-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg font-semibold transition-all bg-brand-500 text-white">
+                    Todas
+                </button>
+                <button onclick="filtrar(this, 'recientes')" class="filter-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg font-semibold transition-all text-gray-400">
+                    Recientes
+                </button>
+            </div>
+            
+            <button onclick="cargarFotos()" id="btnRecargar" class="p-3 bg-zinc-900 hover:bg-zinc-800 rounded-xl border border-zinc-800 text-gray-200 active:scale-95 transition-all flex-shrink-0">
+                <i data-lucide="refresh-cw" class="w-4 h-4 btn-icon"></i>
+            </button>
+        </div>
+
+        <!-- APP STATES -->
+        <div id="loadingGaleria" class="hidden flex-col items-center justify-center py-28">
+            <i data-lucide="loader" class="w-8 h-8 text-brand-500 spinning mb-3"></i>
+            <p class="text-xs text-gray-400 font-mono tracking-wider uppercase">Sincronizando Galería...</p>
+        </div>
+
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-28 text-center">
+            <i data-lucide="image-off" class="w-8 h-8 text-zinc-600 mb-2"></i>
+            <p class="text-sm text-gray-400">No hay fotos registradas para este cliente.</p>
+        </div>
+
+        <div id="errorState" class="hidden flex-col items-center justify-center py-28 text-center">
+            <i data-lucide="alert-circle" class="w-8 h-8 text-brand-500 mb-2"></i>
+            <p class="text-sm text-gray-300 mb-3">Error de conexión con el servidor remoto.</p>
+            <button onclick="cargarFotos()" class="px-4 py-2 bg-brand-500 text-xs font-bold rounded-xl">Reintentar</button>
+        </div>
+
+        <!-- REJILLA ADAPTADA DE 2 A 4 COLUMNAS -->
+        <div id="galleryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+    </main>
+
+    <!-- ============================================
+         VISOR LIGHTBOX CON SOPORTE FULLSCREEN
+         ============================================ -->
+    <div id="customLightbox" class="fixed inset-0 z-50 bg-black/98 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col justify-between hidden select-none">
+        
+        <!-- Header Superior -->
+        <div class="w-full flex justify-between items-center px-4 py-4 bg-gradient-to-b from-black/95 to-transparent z-10">
+            <div class="min-w-0 flex-1 pr-3">
+                <h4 id="lightboxTitle" class="font-bold text-sm text-gray-100 truncate">Visualizador</h4>
+                <p id="lightboxCounter" class="text-xs text-zinc-400 font-mono mt-0.5">0 / 0</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <!-- Botón Fullscreen -->
+                <button onclick="toggleFullscreen()" class="p-3 bg-zinc-900 text-gray-300 rounded-xl border border-zinc-800 active:bg-zinc-800" title="Pantalla Completa">
+                    <i data-lucide="maximize" class="w-5 h-5" id="fsIcon"></i>
+                </button>
+                <!-- Botón Cerrar -->
+                <button onclick="closeLightbox()" class="p-3 bg-zinc-900 text-gray-300 rounded-xl border border-zinc-800 active:bg-zinc-800" title="Cerrar">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Imagen Central Proyectada -->
+        <div class="flex-1 w-full flex items-center justify-center p-3 relative min-h-0 bg-black/40">
+            <img id="lightboxImg" src="" alt="Preview" class="max-w-full max-h-[68vh] object-contain rounded-lg shadow-2xl transition-all duration-200">
+        </div>
+
+        <!-- Barra de Herramientas Inferior Táctil -->
+        <div class="w-full bg-gradient-to-t from-black via-black/95 to-transparent pt-4 pb-8 px-4 flex flex-col gap-4">
+            <div id="lightboxFooterDetails" class="text-center text-[10px] font-mono text-zinc-500 truncate px-4">
+                -
+            </div>
+
+            <!-- Navegación y Control Ergonómico -->
+            <div class="flex items-center justify-between max-w-sm mx-auto w-full gap-3">
+                <button onclick="changeLightboxSlide(-1)" class="py-3.5 bg-zinc-900 text-white rounded-xl border border-zinc-800 active:bg-zinc-800 flex-1 flex justify-center shadow-lg">
+                    <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                </button>
+                
+                <button onclick="eliminarDesdeLightbox()" class="py-3.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl border border-red-500/20 active:scale-95 transition-all px-6 flex justify-center shadow-md shadow-red-950/20" title="Eliminar Imagen">
+                    <i data-lucide="trash-2" class="w-6 h-6"></i>
+                </button>
+
+                <button onclick="changeLightboxSlide(1)" class="py-3.5 bg-zinc-900 text-white rounded-xl border border-zinc-800 active:bg-zinc-800 flex-1 flex justify-center shadow-lg">
+                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODAL DE SEGURIDAD CON FONDO NEGRO PREMIUM 95%
+         ============================================ -->
+    <div id="passwordModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center hidden opacity-0 transition-opacity duration-200 p-4 select-none">
+        <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl max-w-sm w-full shadow-2xl transform scale-95 transition-transform duration-200" id="passwordBox">
+            
+            <div class="flex items-center gap-3 text-brand-500 mb-2">
+                <div class="p-2 bg-brand-500/10 rounded-xl border border-brand-500/20">
+                    <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-base font-bold text-white uppercase tracking-wider">Verificación</h3>
+            </div>
+            
+            <p class="text-sm text-zinc-400 mb-5 leading-relaxed">Por motivos de seguridad, ingresa la clave del sistema para remover la foto de la nube.</p>
+            
+            <input type="password" id="masterPasswordInput" placeholder="Contraseña maestra" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3.5 text-base text-white focus:outline-none focus:border-brand-500 transition-all text-center tracking-widest mb-5">
+            
+            <div class="flex gap-3 text-sm font-bold">
+                <button onclick="closePasswordModal()" class="flex-1 py-3.5 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-zinc-300 active:scale-95 transition-all border border-zinc-700/50">Cancelar</button>
+                <button id="btnConfirmMasterPassword" class="flex-1 py-3.5 bg-brand-500 hover:bg-brand-600 rounded-xl text-white shadow-xl shadow-brand-500/20 active:scale-95 transition-all">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Core -->
+    <script>
+        const API_URL = 'https://ztart.mx/fotos';
+        const CLIENTE_ID = "40";
+        const CLAVE_ELIMINAR = "clave123";
+        
+        let fotosData = [];
+        let filtroActual = 'todos';
+        let currentLightboxIndex = 0;
+        let pendingDeleteId = null;
+
+        function setViewState(state) {
+            document.getElementById('loadingGaleria').style.display = state === 'loading' ? 'flex' : 'none';
+            document.getElementById('emptyState').style.display = state === 'empty' ? 'flex' : 'none';
+            document.getElementById('errorState').style.display = state === 'error' ? 'flex' : 'none';
+            document.getElementById('galleryGrid').style.display = state === 'ready' ? 'grid' : 'none';
+        }
+
+        async function cargarFotos() {
+            const btn = document.getElementById('btnRecargar');
+            if(btn) btn.querySelector('.btn-icon').classList.add('spinning');
+            setViewState('loading');
+
+            try {
+                const response = await fetch(`${API_URL}?cliente_id=${CLIENTE_ID}`, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+
+                if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+                    fotosData = data.data;
+                    procesarYRenderizar();
+                    actualizarContadores(data.data.length, data.limite);
+                    setViewState('ready');
+                } else {
+                    setViewState('empty');
+                    actualizarContadores(0, data.limite);
+                }
+            } catch (error) {
+                setViewState('error');
+            } finally {
+                if(btn) btn.querySelector('.btn-icon').classList.remove('spinning');
+            }
+        }
+
+        function procesarYRenderizar() {
+            let fotosMostrar = [...fotosData];
+            if (filtroActual === 'recientes') {
+                fotosMostrar.sort((a, b) => (b.id || 0) - (a.id || 0));
+            }
+            renderGrid(fotosMostrar);
+        }
+
+        function renderGrid(fotos) {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = '';
+
+            fotos.forEach((foto, index) => {
+                const imgUrl = foto.name || foto.url || foto.src || '';
+                const fotoId = foto.id || index;
+                if (!imgUrl) return;
+
+                const card = document.createElement('div');
+                card.className = 'grid-item group relative bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800/80 shadow-md';
+                
+                card.innerHTML = `
+                    <div onclick="openLightbox(${index})" class="aspect-square w-full overflow-hidden bg-black relative">
+                        <img src="${escapeHtml(imgUrl)}" loading="lazy" alt="Pic" class="w-full h-full object-cover" onerror="this.closest('.grid-item').remove()">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80"></div>
+                    </div>
+                    <!-- Controles integrados limpios -->
+                    <div class="absolute bottom-2 left-2 right-2 flex justify-between items-center pointer-events-none">
+                        <span class="bg-zinc-950/90 text-zinc-300 text-xs font-mono px-2 py-0.5 rounded-md border border-zinc-800/80">#${fotoId}</span>
+                        <button onclick="event.stopPropagation(); requestDelete(${fotoId})" class="p-2 bg-brand-500 text-white rounded-xl pointer-events-auto shadow-md active:scale-90 transition-transform" title="Eliminar">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // CONTROL LIGHTBOX
+        function openLightbox(index) {
+            currentLightboxIndex = index;
+            const lightbox = document.getElementById('customLightbox');
+            document.body.classList.add('lock-scroll');
+            
+            lightbox.classList.remove('hidden');
+            setTimeout(() => {
+                lightbox.classList.remove('opacity-0');
+                lightbox.classList.add('opacity-100');
+                lightbox.style.pointerEvents = 'auto';
+            }, 30);
+            
+            updateLightboxSlide();
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('customLightbox');
+            document.body.classList.remove('lock-scroll');
+            lightbox.classList.remove('opacity-100');
+            lightbox.classList.add('opacity-0');
+            lightbox.style.pointerEvents = 'none';
+            
+            // Apagar Fullscreen si se cierra la vista
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+            
+            setTimeout(() => lightbox.classList.add('hidden'), 250);
+        }
+
+        function changeLightboxSlide(direction) {
+            let targetFotos = [...fotosData];
+            if (filtroActual === 'recientes') targetFotos.sort((a, b) => (b.id || 0) - (a.id || 0));
+
+            currentLightboxIndex += direction;
+            if (currentLightboxIndex >= targetFotos.length) currentLightboxIndex = 0;
+            if (currentLightboxIndex < 0) currentLightboxIndex = targetFotos.length - 1;
+            
+            updateLightboxSlide();
+        }
+
+        function updateLightboxSlide() {
+            let targetFotos = [...fotosData];
+            if (filtroActual === 'recientes') targetFotos.sort((a, b) => (b.id || 0) - (a.id || 0));
+
+            const currentFoto = targetFotos[currentLightboxIndex];
+            if (!currentFoto) return;
+
+            const imgUrl = currentFoto.name || currentFoto.url || currentFoto.src || '';
+            document.getElementById('lightboxImg').src = imgUrl;
+
+            document.getElementById('lightboxTitle').textContent = `ID Foto #${currentFoto.id || currentLightboxIndex}`;
+            document.getElementById('lightboxCounter').textContent = `${currentLightboxIndex + 1} / ${targetFotos.length}`;
+            document.getElementById('lightboxFooterDetails').textContent = imgUrl;
+        }
+
+        // CONFIGURACIÓN FULLSCREEN NATIVO
+        function toggleFullscreen() {
+            const container = document.getElementById('customLightbox');
+            const icon = document.getElementById('fsIcon');
+
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().then(() => {
+                    icon.setAttribute('data-lucide', 'minimize');
+                    lucide.createIcons();
+                }).catch(err => console.log("Error Fullscreen:", err));
+            } else {
+                document.exitFullscreen();
+                icon.setAttribute('data-lucide', 'maximize');
+                lucide.createIcons();
+            }
+        }
+
+        function eliminarDesdeLightbox() {
+            let targetFotos = [...fotosData];
+            if (filtroActual === 'recientes') targetFotos.sort((a, b) => (b.id || 0) - (a.id || 0));
+            
+            const currentFoto = targetFotos[currentLightboxIndex];
+            if (currentFoto && currentFoto.id) {
+                closeLightbox();
+                requestDelete(currentFoto.id);
+            }
+        }
+
+        // CONTROL SEGURIDAD MODAL (BACKDROP NEGRO 95%)
+        function requestDelete(id) {
+            pendingDeleteId = id;
+            const modal = document.getElementById('passwordModal');
+            const box = document.getElementById('passwordBox');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                box.classList.remove('scale-95');
+                box.classList.add('scale-100');
+            }, 30);
+
+            const input = document.getElementById('masterPasswordInput');
+            input.value = '';
+            setTimeout(() => input.focus(), 120);
+
+            document.getElementById('btnConfirmMasterPassword').onclick = ejecutarBorradoSeguro;
+        }
+
+        function closePasswordModal() {
+            const modal = document.getElementById('passwordModal');
+            const box = document.getElementById('passwordBox');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            box.classList.remove('scale-100');
+            box.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+
+        async function ejecutarBorradoSeguro() {
+            const inputPass = document.getElementById('masterPasswordInput').value;
+            if (inputPass !== CLAVE_ELIMINAR) {
+                alert('❌ Error: Credenciales incorrectas de borrado.');
+                closePasswordModal();
+                return;
+            }
+
+            closePasswordModal();
+            setViewState('loading');
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: pendingDeleteId })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    cargarFotos();
+                } else {
+                    alert(data.mensaje || 'Error del servidor');
+                    setViewState('ready');
+                }
+            } catch (error) {
+                alert('Fallo de respuesta de red.');
+                setViewState('ready');
+            }
+        }
+
+        function filtrar(btn, tipo) {
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.className = "filter-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg font-semibold transition-all text-gray-400";
+            });
+            btn.className = "filter-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg font-semibold transition-all bg-brand-500 text-white";
+            filtroActual = tipo;
+            if (fotosData.length > 0) procesarYRenderizar();
+        }
+
+        function actualizarContadores(total, limite) {
+            document.getElementById('statTotal').textContent = total || 0;
+            document.getElementById('statDisp').textContent = limite?.disponible !== undefined ? limite.disponible : '∞';
+        }
+
+        function escapeHtml(text) {
+            if (text == null) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('customLightbox').classList.contains('hidden')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') changeLightboxSlide(1);
+            if (e.key === 'ArrowLeft') changeLightboxSlide(-1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            cargarFotos();
+        });
+    </script>
+</body>
+</html>

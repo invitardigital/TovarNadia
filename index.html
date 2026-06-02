@@ -52,23 +52,7 @@
 
 
     <link rel="stylesheet" media="screen" href="./assets/site/css/invite.css">
-    <link rel="stylesheet" media="screen" href="./assets/site/css/modal.css">
  
-
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- LightGallery -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lightgallery.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-zoom.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-thumbnail.min.css">
-    
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.min.css">
-    
-
-
   </head>
 
 
@@ -587,57 +571,26 @@
         </div>
         <div class="position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(255,255,255,.05);"></div>
 
-    
-        
 
 
-
-
+                  
 
       </section>
 
 
+      <div class="col-12 text-center">
+        <a href="albun.html"
+            class="btn btn-block rounded-pill  btn-lg fs-4 line-height-1 btn-primary ">
+          <i class='bx bx-photo-album me-2'></i> Mirar Album
+        </a>
+      </div><br>
 
-
-
-    <!-- Header -->
-    <div class="gallery-header">
-        <h1>📷 Galería de Fotos</h1>
-        <p id="contadorHeader">Cargando...</p>
-        <button class="btn-abrir" onclick="abrirGaleria()">
-            <i class="fas fa-images"></i> Ver Galería
-        </button>
-    </div>
-
-    <!-- Modal Galería -->
-    <div class="modal fade modal-galeria" id="modalGaleria" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <span>📷 Galería de Fotos</span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="loading-state" id="loadingGaleria">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Cargando fotos...</p>
-                    </div>
-                    <div class="empty-state d-none" id="emptyState">
-                        <i class="fas fa-camera-slash"></i>
-                        <h4>No hay fotos</h4>
-                        <p>Este cliente aún no tiene fotos en la galería.</p>
-                    </div>
-                    <div class="gallery-grid" id="galleryGrid"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
+      <div class="col-12 text-center">
+        <a href="foto.html"
+            class="btn btn-block rounded-pill  btn-lg fs-4 line-height-1 btn-primary ">
+          <i class='bx bxs-camera me-2'></i> Tomar foto
+        </a>
+      </div>
 
       
 
@@ -726,271 +679,23 @@
     </main>
 
     <script src="./assets/site/js/invite-A16.js"></script>
-
     <!-- Vendor Scripts -->
     <script src="./assets/site/vendor/jarallax/dist/jarallax.min.js"></script>
     <script src="./assets/site/vendor/parallax-js/dist/parallax.min.js"></script>
     <script src="./assets/site/vendor/swiper/swiper-bundle.min.js"></script>
     
-
+    <script src="./assets/site/vendor/lightgallery/lightgallery.min.js"></script>
+    <script src="./assets/site/vendor/lightgallery/plugins/fullscreen/lg-fullscreen.min.js"></script>
+    <script src="./assets/site/vendor/lightgallery/plugins/zoom/lg-zoom.min.js"></script>
+    <script src="./assets/site/vendor/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script>
+    <script src="./assets/site/vendor/lightgallery/plugins/video/lg-video.min.js"></script>
 
     <!-- Main Theme Script -->
     <script src="./assets/site/js/theme.min.js"></script>
+    
 
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/lightgallery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/zoom/lg-zoom.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/thumbnail/lg-thumbnail.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.all.min.js"></script>
+  </body>
 
 
-
-    <script>
-        // ============================================
-        // CONFIGURACIÓN
-        // ============================================
-        const API_URL = 'https://ztart.mx/fotos';
-        const CLIENTE_ID = "40";
-        const CLAVE_ELIMINAR = "clave123";
-
-        let lightGalleryInstance = null;
-        let modalInstance = null;
-
-        // ============================================
-        // ABRIR GALERÍA
-        // ============================================
-        function abrirGaleria() {
-            const modalEl = document.getElementById('modalGaleria');
-            modalInstance = new bootstrap.Modal(modalEl, {
-                backdrop: 'static',
-                keyboard: false
-            });
-            modalInstance.show();
-            
-            cargarFotos();
-        }
-
-        // ============================================
-        // CARGAR FOTOS
-        // ============================================
-        function cargarFotos() {
-            const grid = $('#galleryGrid');
-            const loading = $('#loadingGaleria');
-            const empty = $('#emptyState');
-            
-            loading.removeClass('d-none');
-            empty.addClass('d-none');
-            grid.empty();
-
-            $.ajax({
-                url: API_URL,
-                method: 'GET',
-                data: { cliente_id: CLIENTE_ID },
-                dataType: 'json',
-                success: function(data) {
-                    loading.addClass('d-none');
-
-                    if (data.success && data.data && data.data.length > 0) {
-                        renderizarGaleria(data.data);
-                        actualizarContadores(data.data.length, data.limite);
-                    } else {
-                        empty.removeClass('d-none');
-                        actualizarContadores(0, data.limite);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error:", status, error);
-                    loading.addClass('d-none');
-                    empty.removeClass('d-none');
-                    empty.html(`
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h4>Error ${xhr.status}</h4>
-                        <p>${error || 'No se pudieron cargar las fotos'}</p>
-                    `);
-                }
-            });
-        }
-
-        // ============================================
-        // RENDERIZAR GALERÍA
-        // ============================================
-        function renderizarGaleria(fotos) {
-            const grid = document.getElementById('galleryGrid');
-            grid.innerHTML = '';
-
-            fotos.forEach((foto) => {
-                const item = document.createElement('a');
-                item.className = 'gallery-item';
-                item.href = foto.name;
-                item.setAttribute('data-src', foto.name);
-                item.setAttribute('data-sub-html', `<h4>Foto #${foto.id}</h4>`);
-                
-                item.innerHTML = `
-                    <img src="${foto.name}" alt="Foto ${foto.id}" loading="lazy" 
-                         onerror="this.parentElement.style.display='none'">
-                    <div class="overlay">
-                        <div class="foto-id">ID: ${foto.id}</div>
-                        <div class="foto-fecha">Cliente: ${foto.cliente_id || 'N/A'}</div>
-                    </div>
-                    <button class="btn-eliminar" onclick="event.preventDefault(); event.stopPropagation(); eliminarFoto(${foto.id})" title="Eliminar">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-                
-                grid.appendChild(item);
-            });
-
-            if (lightGalleryInstance) {
-                lightGalleryInstance.destroy();
-            }
-
-            lightGalleryInstance = lightGallery(grid, {
-                plugins: [lgZoom, lgThumbnail],
-                speed: 500,
-                selector: 'a',
-                download: false,
-                counter: true,
-                backdropDuration: 300,
-                closable: true,
-                escKey: true
-            });
-        }
-
-        // ============================================
-        // ELIMINAR FOTO - CON CIERRE DE MODAL
-        // ============================================
-        async function eliminarFoto(id) {
-            // Cerrar LightGallery si está abierto
-            if (lightGalleryInstance) {
-                lightGalleryInstance.closeGallery();
-            }
-
-            const { value: password } = await Swal.fire({
-                title: '🔒 Contraseña requerida',
-                input: 'password',
-                inputPlaceholder: 'Escribe la contraseña...',
-                showCancelButton: true,
-                confirmButtonText: 'Eliminar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#e94560',
-                allowOutsideClick: false,
-                allowEscapeKey: true
-            });
-
-            if (!password) return;
-
-            if (password !== CLAVE_ELIMINAR) {
-                await Swal.fire({
-                    icon: 'error',
-                    title: '❌ Incorrecta',
-                    text: 'La foto NO se eliminó.',
-                    confirmButtonColor: '#e94560'
-                });
-                return;
-            }
-
-            const confirmar = await Swal.fire({
-                icon: 'warning',
-                title: '¿Eliminar foto?',
-                text: 'Esta acción no se puede deshacer.',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#e94560',
-                cancelButtonColor: '#6c757d'
-            });
-
-            if (!confirmar.isConfirmed) return;
-
-            // Mostrar loading
-            Swal.fire({
-                title: 'Eliminando...',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-
-            $.ajax({
-                url: API_URL,
-                method: 'DELETE',
-                contentType: 'application/json',
-                data: JSON.stringify({ id: id }),
-                dataType: 'json',
-                success: function(data) {
-                    Swal.close();
-                    
-                    if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '✅ Eliminado',
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                        cargarFotos();
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '❌ Error',
-                            text: data.mensaje || 'No se pudo eliminar'
-                        });
-                    }
-                },
-                error: function(xhr, status, error) {
-                    Swal.close();
-                    Swal.fire({
-                        icon: 'error',
-                        title: '❌ Error',
-                        text: error || 'No se pudo conectar'
-                    });
-                }
-            });
-        }
-
-        // ============================================
-        // CONTADORES
-        // ============================================
-        function actualizarContadores(total, limite) {
-            const header = document.getElementById('contadorHeader');
-            
-            if (limite) {
-                header.textContent = `${total}/${limite.limite} fotos (${limite.disponible} disponibles)`;
-            } else {
-                header.textContent = `${total} fotos`;
-            }
-        }
-
-        // ============================================
-        // INICIALIZAR
-        // ============================================
-        function cargarContadorInicial() {
-            $.ajax({
-                url: API_URL,
-                method: 'GET',
-                data: { cliente_id: CLIENTE_ID },
-                dataType: 'json',
-                success: function(data) {
-                    if (data.success) {
-                        actualizarContadores(data.total, data.limite);
-                    }
-                },
-                error: function() {
-                    document.getElementById('contadorHeader').textContent = 'Error al cargar';
-                }
-            });
-        }
-
-        $(document).ready(function() {
-            cargarContadorInicial();
-        });
-    </script>
-
-
-
-
-
-
-</body>
 </html>
