@@ -731,6 +731,8 @@
     </main>
 
     <script src="./assets/site/js/invite-A16.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Vendor Scripts -->
     <script src="./assets/site/vendor/jarallax/dist/jarallax.min.js"></script>
     <script src="./assets/site/vendor/parallax-js/dist/parallax.min.js"></script>
@@ -750,257 +752,231 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.all.min.js"></script>
 
     <script>
-        // ============================================
-        // CONFIGURACIÓN
-        // ============================================
-        const API_URL = 'https://ztart.mx/fotos';
-        const CLIENTE_ID = "40";
-        const CLAVE_ELIMINAR = "clave123";
+   
+// ============================================
+// CONFIGURACIÓN
+// ============================================
+const API_URL = 'https://ztart.mx/fotos';
+const CLIENTE_ID = "40";
+const CLAVE_ELIMINAR = "clave123";
 
-        let fotosData = [];
-        let lightGalleryInstance = null;
+let lightGalleryInstance = null;
 
-        // ============================================
-        // ABRIR GALERÍA
-        // ============================================
-        async function abrirGaleria() {
-            const modal = new bootstrap.Modal(document.getElementById('modalGaleria'));
-            modal.show();
-            
-            await cargarFotos();
-        }
+// ============================================
+// ABRIR GALERÍA
+// ============================================
+function abrirGaleria() {
+    const modalEl = document.getElementById('modalGaleria');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+    
+    cargarFotos();
+}
 
-        // ============================================
-        // CARGAR FOTOS DE LA API
-        // ============================================
-        async function cargarFotos() {
-            const grid = document.getElementById('galleryGrid');
-            const loading = document.getElementById('loadingGaleria');
-            
-            loading.style.display = 'block';
-            grid.innerHTML = '';
+// ============================================
+// CARGAR FOTOS CON jQuery
+// ============================================
+function cargarFotos() {
+    const grid = $('#galleryGrid');
+    const loading = $('#loadingGaleria');
+    const empty = $('#emptyState');
+    
+    loading.removeClass('d-none');
+    empty.addClass('d-none');
+    grid.empty();
 
-            try {
-                const res = await fetch(`${API_URL}?cliente_id=${CLIENTE_ID}`);
-                const data = await res.json();
+    $.ajax({
+        url: API_URL,
+        method: 'GET',
+        data: { cliente_id: CLIENTE_ID },
+        dataType: 'json',
+        success: function(data) {
+            loading.addClass('d-none');
 
-                loading.style.display = 'none';
-
-                if (data.success && data.data.length > 0) {
-                    fotosData = data.data;
-                    renderizarGaleria(data.data);
-                    actualizarContadores(data.data.length, data.limite);
-                } else {
-                    grid.innerHTML = `
-                        <div class="empty-state" style="grid-column: 1/-1;">
-                            <i class="fas fa-camera-slash"></i>
-                            <h4>No hay fotos</h4>
-                            <p>Este cliente aún no tiene fotos en la galería.</p>
-                        </div>
-                    `;
-                    actualizarContadores(0, null);
-                }
-
-            } catch (error) {
-                loading.style.display = 'none';
-                grid.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1/-1;">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h4>Error de conexión</h4>
-                        <p>No se pudieron cargar las fotos.</p>
-                    </div>
-                `;
-                console.error("Error:", error);
+            if (data.success && data.data && data.data.length > 0) {
+                renderizarGaleria(data.data);
+                actualizarContadores(data.data.length, data.limite);
+            } else {
+                empty.removeClass('d-none');
+                actualizarContadores(0, data.limite);
             }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error jQuery:", status, error);
+            loading.addClass('d-none');
+            empty.removeClass('d-none');
+            empty.html(`
+                <i class="fas fa-exclamation-triangle"></i>
+                <h4>Error ${xhr.status}</h4>
+                <p>${error || 'No se pudieron cargar las fotos'}</p>
+                <small class="text-muted">Revisa la consola (F12) para más detalles</small>
+            `);
         }
+    });
+}
 
-        // ============================================
-        // RENDERIZAR GALERÍA
-        // ============================================
-        function renderizarGaleria(fotos) {
-            const grid = document.getElementById('galleryGrid');
-            grid.innerHTML = '';
+// ============================================
+// RENDERIZAR GALERÍA
+// ============================================
+function renderizarGaleria(fotos) {
+    const grid = document.getElementById('galleryGrid');
+    grid.innerHTML = '';
 
-            fotos.forEach((foto, index) => {
-                const item = document.createElement('div');
-                item.className = 'gallery-item';
-                item.setAttribute('data-src', foto.name);
-                item.setAttribute('data-sub-html', `<h4>Foto #${foto.id}</h4><p>Cliente: ${foto.cliente_id || 'N/A'}</p>`);
-                
-                item.innerHTML = `
-                    <img src="${foto.name}" alt="Foto ${foto.id}" loading="lazy" onerror="this.src='https://via.placeholder.com/300?text=Error'">
-                    <div class="overlay">
-                        <small>ID: ${foto.id}</small>
-                    </div>
-                    <button class="btn-eliminar" onclick="event.stopPropagation(); eliminarFoto(${foto.id})" title="Eliminar">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-                
-                grid.appendChild(item);
-            });
+    fotos.forEach((foto) => {
+        const item = document.createElement('a');
+        item.className = 'gallery-item';
+        item.href = foto.name;
+        item.setAttribute('data-src', foto.name);
+        item.setAttribute('data-sub-html', `<h4>Foto #${foto.id}</h4>`);
+        
+        item.innerHTML = `
+            <img src="${foto.name}" alt="Foto ${foto.id}" loading="lazy">
+            <div class="overlay">
+                <small>ID: ${foto.id}</small>
+            </div>
+            <button class="btn-eliminar" onclick="event.preventDefault(); event.stopPropagation(); eliminarFoto(${foto.id})" title="Eliminar">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        
+        grid.appendChild(item);
+    });
 
-            // Inicializar LightGallery
-            if (lightGalleryInstance) {
-                lightGalleryInstance.destroy();
-            }
+    if (lightGalleryInstance) {
+        lightGalleryInstance.destroy();
+    }
 
-            lightGalleryInstance = lightGallery(document.getElementById('galleryGrid'), {
-                plugins: [lgZoom, lgThumbnail],
-                speed: 500,
-                selector: '.gallery-item',
-                download: false,
-                counter: true,
-                backdropDuration: 300,
-                toggleThumb: true,
-                exThumbImage: 'data-src'
-            });
-        }
+    lightGalleryInstance = lightGallery(grid, {
+        plugins: [lgZoom, lgThumbnail],
+        speed: 500,
+        selector: 'a',
+        download: false,
+        counter: true,
+        backdropDuration: 300
+    });
+}
 
-        // ============================================
-        // ELIMINAR FOTO CON PASSWORD
-        // ============================================
-        async function eliminarFoto(id) {
-            const { value: password } = await Swal.fire({
-                title: '🔒 Contraseña requerida',
-                text: 'Ingresa la clave para eliminar esta foto',
-                input: 'password',
-                inputPlaceholder: 'Escribe la contraseña...',
-                showCancelButton: true,
-                confirmButtonText: 'Eliminar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                background: '#1a1a2e',
-                color: '#fff',
-                inputAttributes: {
-                    autocapitalize: 'off',
-                    autocorrect: 'off'
-                },
-                customClass: {
-                    popup: 'rounded-3',
-                    input: 'bg-dark text-white border-secondary'
-                }
-            });
+// ============================================
+// ELIMINAR FOTO CON jQuery
+// ============================================
+async function eliminarFoto(id) {
+    const { value: password } = await Swal.fire({
+        title: '🔒 Contraseña requerida',
+        input: 'password',
+        inputPlaceholder: 'Escribe la contraseña...',
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#dc3545',
+        background: '#1a1a2e',
+        color: '#fff'
+    });
 
-            // Si canceló o no escribió nada
-            if (!password) {
-                return; // No hacer nada
-            }
+    if (!password) return;
 
-            // Verificar contraseña
-            if (password !== CLAVE_ELIMINAR) {
+    if (password !== CLAVE_ELIMINAR) {
+        Swal.fire({
+            icon: 'error',
+            title: '❌ Incorrecta',
+            text: 'La foto NO se eliminó.',
+            background: '#1a1a2e',
+            color: '#fff'
+        });
+        return;
+    }
+
+    const confirmar = await Swal.fire({
+        icon: 'warning',
+        title: '¿Eliminar?',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#dc3545',
+        background: '#1a1a2e',
+        color: '#fff'
+    });
+
+    if (!confirmar.isConfirmed) return;
+
+    // DELETE con jQuery
+    $.ajax({
+        url: API_URL,
+        method: 'DELETE',
+        contentType: 'application/json',
+        data: JSON.stringify({ id: id }),
+        dataType: 'json',
+        success: function(data) {
+            if (data.success) {
                 Swal.fire({
-                    icon: 'error',
-                    title: '❌ Contraseña incorrecta',
-                    text: 'La foto NO se ha eliminado.',
-                    confirmButtonColor: '#dc3545',
+                    icon: 'success',
+                    title: '✅ Eliminado',
+                    timer: 1500,
+                    showConfirmButton: false,
                     background: '#1a1a2e',
                     color: '#fff'
                 });
-                return; // No eliminar
+                cargarFotos();
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '❌ Error',
+                    text: data.mensaje || 'No se pudo eliminar',
+                    background: '#1a1a2e',
+                    color: '#fff'
+                });
             }
-
-            // Contraseña correcta - Confirmar eliminación
-            const confirmar = await Swal.fire({
-                icon: 'warning',
-                title: '⚠️ ¿Eliminar foto?',
-                text: 'Esta acción no se puede deshacer.',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'No, cancelar',
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
+        },
+        error: function(xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Error',
+                text: error || 'No se pudo conectar',
                 background: '#1a1a2e',
                 color: '#fff'
             });
-
-            if (!confirmar.isConfirmed) {
-                return;
-            }
-
-            // Eliminar foto
-            try {
-                const res = await fetch(API_URL, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: id })
-                });
-
-                const data = await res.json();
-
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '✅ Eliminado',
-                        text: 'La foto se ha eliminado correctamente.',
-                        confirmButtonColor: '#28a745',
-                        background: '#1a1a2e',
-                        color: '#fff',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-
-                    // Recargar galería
-                    await cargarFotos();
-
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: '❌ Error',
-                        text: data.mensaje || 'No se pudo eliminar',
-                        confirmButtonColor: '#dc3545',
-                        background: '#1a1a2e',
-                        color: '#fff'
-                    });
-                }
-
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: '❌ Error de conexión',
-                    text: 'No se pudo conectar con el servidor.',
-                    confirmButtonColor: '#dc3545',
-                    background: '#1a1a2e',
-                    color: '#fff'
-                });
-            }
         }
+    });
+}
 
-        // ============================================
-        // ACTUALIZAR CONTADORES
-        // ============================================
-        function actualizarContadores(total, limite) {
-            const header = document.getElementById('contadorHeader');
-            const modal = document.getElementById('contadorModal');
+// ============================================
+// CONTADORES
+// ============================================
+function actualizarContadores(total, limite) {
+    const header = document.getElementById('contadorHeader');
+    
+    if (limite) {
+        header.textContent = `${total}/${limite.limite} fotos (${limite.disponible} libres)`;
+    } else {
+        header.textContent = `${total} fotos`;
+    }
+}
 
-            if (limite) {
-                header.textContent = `${total} de ${limite.limite} fotos (${limite.disponible} disponibles)`;
-                modal.textContent = `(${total} fotos - ${limite.disponible} restantes)`;
-            } else {
-                header.textContent = `${total} fotos en total`;
-                modal.textContent = `(${total} fotos)`;
+// ============================================
+// INICIALIZAR
+// ============================================
+function cargarContadorInicial() {
+    $.ajax({
+        url: API_URL,
+        method: 'GET',
+        data: { cliente_id: CLIENTE_ID },
+        dataType: 'json',
+        success: function(data) {
+            if (data.success) {
+                actualizarContadores(data.total, data.limite);
             }
+        },
+        error: function() {
+            document.getElementById('contadorHeader').textContent = 'Error al cargar';
         }
+    });
+}
 
-        // ============================================
-        // CARGAR CONTADOR AL INICIO
-        // ============================================
-        async function cargarContadorInicial() {
-            try {
-                const res = await fetch(`${API_URL}?cliente_id=${CLIENTE_ID}`);
-                const data = await res.json();
+// Al cargar la página
+$(document).ready(function() {
+    cargarContadorInicial();
+});
 
-                if (data.success) {
-                    actualizarContadores(data.total, data.limite);
-                }
-            } catch (e) {
-                document.getElementById('contadorHeader').textContent = 'No se pudo cargar';
-            }
-        }
 
-        // Inicializar
-        cargarContadorInicial();
     </script>
 
 
