@@ -50,173 +50,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Handlee&amp;display=swap" rel="stylesheet">
 
-    <style>
-      .playwrite-au-tas-400,
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        font-family: "Playwrite AU TAS", cursive !important;
-        font-optical-sizing: auto;
-        font-weight: 400;
-        font-style: normal;
-      }
-
-      body,
-      p,
-      .handlee-regular {
-        font-family: "Handlee", cursive;
-        font-weight: 400;
-        font-style: normal;
-      }
-
-      .text-shadow-black {
-        text-shadow: 0 0 10px rgba(0, 0, 0, 0.75);
-      }
-
-      .color-main {
-        color: #a8a8a8 !important
-      }
-
-      .color-secondary {
-        color: #000 !important
-      }
-
-      .background-main {
-        background-color: #DFDFDF !important
-      }
-
-      .bg-gradient-primary {
-        background: linear-gradient(45deg, #DFDFDF, #a8a8a8) !important;
-      }
-
-      .nav-locations .nav-link.active {
-        background-color: #a8a8a8 !important;
-        color: #000 !important;
-      }
-
-      .nav-locations .nav-link {
-        background-color: #DFDFDF !important;
-        color: #a8a8a8 !important;
-      }
-
-      .nav-locations .nav-link:hover {
-        background-color: #000 !important;
-        color: #a8a8a8 !important;
-      }
-
-      .bg-light {
-        background-color: #DFDFDF !important;
-      }
-
-      .btn-primary {
-        color: #fff;
-        background-color: #a8a8a8;
-        border-color: #a8a8a8;
-      }
-
-      .btn-primary:hover {
-        color: #fff;
-        background-color: #000;
-        border-color: #000;
-      }
-
-      .btn-outline-primary {
-        color: #a8a8a8;
-        border-color: #a8a8a8;
-      }
-
-      .btn-outline-primary:hover {
-        color: #a8a8a8;
-        border-color: #a8a8a8;
-        background-color: #000;
-      }
-
-      .btn-check:checked+.btn, :not(.btn-check)+.btn:active, .btn:first-child:active, .btn.active, .btn.show 
-      {
-        background-color: #a8a8a8 !important;
-        border-color: #a8a8a8 !important;
-      }
-
-      .parallax-img-section {
-        min-height: 750px !important;
-      }
-
-      .parallax-video-section {
-        min-height: 550px !important;
-      }
-
-      .border-end-md {
-        border-right: 1px solid #000 !important;
-      }
-
-      .swiper-pagination-bullet-active {
-        background-color: #a8a8a8 !important;
-      }
-
-      .btn-prev:not(.bg-transparent):hover, .btn-next:not(.bg-transparent):hover {
-        background-color: #a8a8a8 !important;
-      }
-
-      .fs-super-1 {
-        font-size: 4.5rem !important;
-      }
-
-      .form-check-input:checked {
-        background-color: #a8a8a8 !important;
-        border-color: #a8a8a8 !important;
-      }
-      
-      
-      .form-select:focus,
-      .form-control:focus {
-        border-color: #a8a8a8 !important;
-        box-shadow: 0 0 0 0.25rem rgba(196, 91, 70, 0.25) !important;
-      }
-
-      .line-height-1 {
-        line-height: 1 !important;
-      }
-
-      ::selection,
-      ::-moz-selection {
-        background-color: #000 !important; 
-      }
-
-      :root {
-        --si-user-selection-color: #000;
-        --color-main: #a8a8a8;
-      }
-
-      .custom-audio-player button{
-        background-color: #a8a8a8 !important;
-      }
-
-      .custom-audio-player .custom-audio-player-icon{
-        color: #000 !important;
-      }
-
-      .custom-tooltip {
-        --bs-tooltip-bg: var(--color-main);
-      }
-
-      .btn-video:hover,
-      .btn-video:active {
-        background-color: #a8a8a8 !important;
-        border-color: #a8a8a8 !important;
-        box-shadow: 0 0 10px rgba(196, 91, 70, 0.5) !important;
-      }
-
-      .btn-video {
-        background-color: #000 !important;
-      }
-
-    </style>
 
     <link rel="stylesheet" media="screen" href="./assets/site/css/invite.css">
+    <link rel="stylesheet" media="screen" href="./assets/site/css/modal.css">
  
+
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- LightGallery -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-zoom.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-thumbnail.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.min.css">
+    
+
+
   </head>
 
 
@@ -735,9 +586,60 @@
         </div>
         <div class="position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(255,255,255,.05);"></div>
 
-        <center> HOLA </center>
+    
+        
+
+
+
+
 
       </section>
+
+
+
+
+    <!-- Header -->
+    <div class="gallery-header">
+        <h1>📷 Galería de Fotos</h1>
+   
+        <button class="btn-abrir mt-3" onclick="abrirGaleria()">
+            <i class="fas fa-images mr-2"></i> Ver Galería
+        </button>
+    </div>
+
+    <!-- Modal Fullscreen estilo Invitación -->
+    <div class="modal fade modal-galeria" id="modalGaleria" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Header estilo invitación -->
+                <div class="modal-header border-0">
+                    <h5 class="modal-title w-100 text-center color-main fs-2">
+                        <span>📷 Galería de Fotos</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body text-center py-5">
+                    <!-- Loading -->
+                    <div class="loading" id="loadingGaleria">
+                        <i class="fas fa-spinner"></i>
+                        <p class="mt-3">Cargando fotos...</p>
+                    </div>
+                    
+                    <!-- Grid -->
+                    <div class="gallery-grid" id="galleryGrid"></div>
+                    
+                    <!-- Empty state -->
+                    <div class="empty-state d-none" id="emptyState">
+                        <i class="fas fa-camera-slash"></i>
+                        <h4>No hay fotos</h4>
+                        <p>Este cliente aún no tiene fotos en la galería.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
 
@@ -842,6 +744,267 @@
 
     <!-- Main Theme Script -->
     <script src="./assets/site/js/theme.min.js"></script>
+    
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.5/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        const API_URL = 'https://ztart.mx/fotos';
+        const CLIENTE_ID = "40";
+        const CLAVE_ELIMINAR = "clave123";
+
+        let fotosData = [];
+        let lightGalleryInstance = null;
+
+        // ============================================
+        // ABRIR GALERÍA
+        // ============================================
+        async function abrirGaleria() {
+            const modal = new bootstrap.Modal(document.getElementById('modalGaleria'));
+            modal.show();
+            
+            await cargarFotos();
+        }
+
+        // ============================================
+        // CARGAR FOTOS DE LA API
+        // ============================================
+        async function cargarFotos() {
+            const grid = document.getElementById('galleryGrid');
+            const loading = document.getElementById('loadingGaleria');
+            
+            loading.style.display = 'block';
+            grid.innerHTML = '';
+
+            try {
+                const res = await fetch(`${API_URL}?cliente_id=${CLIENTE_ID}`);
+                const data = await res.json();
+
+                loading.style.display = 'none';
+
+                if (data.success && data.data.length > 0) {
+                    fotosData = data.data;
+                    renderizarGaleria(data.data);
+                    actualizarContadores(data.data.length, data.limite);
+                } else {
+                    grid.innerHTML = `
+                        <div class="empty-state" style="grid-column: 1/-1;">
+                            <i class="fas fa-camera-slash"></i>
+                            <h4>No hay fotos</h4>
+                            <p>Este cliente aún no tiene fotos en la galería.</p>
+                        </div>
+                    `;
+                    actualizarContadores(0, null);
+                }
+
+            } catch (error) {
+                loading.style.display = 'none';
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4>Error de conexión</h4>
+                        <p>No se pudieron cargar las fotos.</p>
+                    </div>
+                `;
+                console.error("Error:", error);
+            }
+        }
+
+        // ============================================
+        // RENDERIZAR GALERÍA
+        // ============================================
+        function renderizarGaleria(fotos) {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = '';
+
+            fotos.forEach((foto, index) => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.setAttribute('data-src', foto.name);
+                item.setAttribute('data-sub-html', `<h4>Foto #${foto.id}</h4><p>Cliente: ${foto.cliente_id || 'N/A'}</p>`);
+                
+                item.innerHTML = `
+                    <img src="${foto.name}" alt="Foto ${foto.id}" loading="lazy" onerror="this.src='https://via.placeholder.com/300?text=Error'">
+                    <div class="overlay">
+                        <small>ID: ${foto.id}</small>
+                    </div>
+                    <button class="btn-eliminar" onclick="event.stopPropagation(); eliminarFoto(${foto.id})" title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                
+                grid.appendChild(item);
+            });
+
+            // Inicializar LightGallery
+            if (lightGalleryInstance) {
+                lightGalleryInstance.destroy();
+            }
+
+            lightGalleryInstance = lightGallery(document.getElementById('galleryGrid'), {
+                plugins: [lgZoom, lgThumbnail],
+                speed: 500,
+                selector: '.gallery-item',
+                download: false,
+                counter: true,
+                backdropDuration: 300,
+                toggleThumb: true,
+                exThumbImage: 'data-src'
+            });
+        }
+
+        // ============================================
+        // ELIMINAR FOTO CON PASSWORD
+        // ============================================
+        async function eliminarFoto(id) {
+            const { value: password } = await Swal.fire({
+                title: '🔒 Contraseña requerida',
+                text: 'Ingresa la clave para eliminar esta foto',
+                input: 'password',
+                inputPlaceholder: 'Escribe la contraseña...',
+                showCancelButton: true,
+                confirmButtonText: 'Eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                background: '#1a1a2e',
+                color: '#fff',
+                inputAttributes: {
+                    autocapitalize: 'off',
+                    autocorrect: 'off'
+                },
+                customClass: {
+                    popup: 'rounded-3',
+                    input: 'bg-dark text-white border-secondary'
+                }
+            });
+
+            // Si canceló o no escribió nada
+            if (!password) {
+                return; // No hacer nada
+            }
+
+            // Verificar contraseña
+            if (password !== CLAVE_ELIMINAR) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '❌ Contraseña incorrecta',
+                    text: 'La foto NO se ha eliminado.',
+                    confirmButtonColor: '#dc3545',
+                    background: '#1a1a2e',
+                    color: '#fff'
+                });
+                return; // No eliminar
+            }
+
+            // Contraseña correcta - Confirmar eliminación
+            const confirmar = await Swal.fire({
+                icon: 'warning',
+                title: '⚠️ ¿Eliminar foto?',
+                text: 'Esta acción no se puede deshacer.',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'No, cancelar',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                background: '#1a1a2e',
+                color: '#fff'
+            });
+
+            if (!confirmar.isConfirmed) {
+                return;
+            }
+
+            // Eliminar foto
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '✅ Eliminado',
+                        text: 'La foto se ha eliminado correctamente.',
+                        confirmButtonColor: '#28a745',
+                        background: '#1a1a2e',
+                        color: '#fff',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+
+                    // Recargar galería
+                    await cargarFotos();
+
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '❌ Error',
+                        text: data.mensaje || 'No se pudo eliminar',
+                        confirmButtonColor: '#dc3545',
+                        background: '#1a1a2e',
+                        color: '#fff'
+                    });
+                }
+
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '❌ Error de conexión',
+                    text: 'No se pudo conectar con el servidor.',
+                    confirmButtonColor: '#dc3545',
+                    background: '#1a1a2e',
+                    color: '#fff'
+                });
+            }
+        }
+
+        // ============================================
+        // ACTUALIZAR CONTADORES
+        // ============================================
+        function actualizarContadores(total, limite) {
+            const header = document.getElementById('contadorHeader');
+            const modal = document.getElementById('contadorModal');
+
+            if (limite) {
+                header.textContent = `${total} de ${limite.limite} fotos (${limite.disponible} disponibles)`;
+                modal.textContent = `(${total} fotos - ${limite.disponible} restantes)`;
+            } else {
+                header.textContent = `${total} fotos en total`;
+                modal.textContent = `(${total} fotos)`;
+            }
+        }
+
+        // ============================================
+        // CARGAR CONTADOR AL INICIO
+        // ============================================
+        async function cargarContadorInicial() {
+            try {
+                const res = await fetch(`${API_URL}?cliente_id=${CLIENTE_ID}`);
+                const data = await res.json();
+
+                if (data.success) {
+                    actualizarContadores(data.total, data.limite);
+                }
+            } catch (e) {
+                document.getElementById('contadorHeader').textContent = 'No se pudo cargar';
+            }
+        }
+
+        // Inicializar
+        cargarContadorInicial();
+    </script>
+
+
+
   </body>
 
 

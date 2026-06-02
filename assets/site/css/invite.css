@@ -1,1 +1,165 @@
 .custom-audio-player{bottom:10px;left:20px;position:fixed;text-align:center;z-index:900}.custom-audio-player button{background-color:red;border:none;border-radius:50%;box-shadow:0 0 10px rgba(0,0,0,.4);cursor:pointer!important;height:45px;line-height:1;margin:0;padding:0;text-align:center;width:45px}@media (max-width:768px){.custom-audio-player{bottom:20px;left:20px}.custom-audio-player .custom-audio-player-icon{font-size:2.5rem!important}}
+
+
+      .playwrite-au-tas-400,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Playwrite AU TAS", cursive !important;
+        font-optical-sizing: auto;
+        font-weight: 400;
+        font-style: normal;
+      }
+
+      body,
+      p,
+      .handlee-regular {
+        font-family: "Handlee", cursive;
+        font-weight: 400;
+        font-style: normal;
+      }
+
+      .text-shadow-black {
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.75);
+      }
+
+      .color-main {
+        color: #a8a8a8 !important
+      }
+
+      .color-secondary {
+        color: #000 !important
+      }
+
+      .background-main {
+        background-color: #DFDFDF !important
+      }
+
+      .bg-gradient-primary {
+        background: linear-gradient(45deg, #DFDFDF, #a8a8a8) !important;
+      }
+
+      .nav-locations .nav-link.active {
+        background-color: #a8a8a8 !important;
+        color: #000 !important;
+      }
+
+      .nav-locations .nav-link {
+        background-color: #DFDFDF !important;
+        color: #a8a8a8 !important;
+      }
+
+      .nav-locations .nav-link:hover {
+        background-color: #000 !important;
+        color: #a8a8a8 !important;
+      }
+
+      .bg-light {
+        background-color: #DFDFDF !important;
+      }
+
+      .btn-primary {
+        color: #fff;
+        background-color: #a8a8a8;
+        border-color: #a8a8a8;
+      }
+
+      .btn-primary:hover {
+        color: #fff;
+        background-color: #000;
+        border-color: #000;
+      }
+
+      .btn-outline-primary {
+        color: #a8a8a8;
+        border-color: #a8a8a8;
+      }
+
+      .btn-outline-primary:hover {
+        color: #a8a8a8;
+        border-color: #a8a8a8;
+        background-color: #000;
+      }
+
+      .btn-check:checked+.btn, :not(.btn-check)+.btn:active, .btn:first-child:active, .btn.active, .btn.show 
+      {
+        background-color: #a8a8a8 !important;
+        border-color: #a8a8a8 !important;
+      }
+
+      .parallax-img-section {
+        min-height: 750px !important;
+      }
+
+      .parallax-video-section {
+        min-height: 550px !important;
+      }
+
+      .border-end-md {
+        border-right: 1px solid #000 !important;
+      }
+
+      .swiper-pagination-bullet-active {
+        background-color: #a8a8a8 !important;
+      }
+
+      .btn-prev:not(.bg-transparent):hover, .btn-next:not(.bg-transparent):hover {
+        background-color: #a8a8a8 !important;
+      }
+
+      .fs-super-1 {
+        font-size: 4.5rem !important;
+      }
+
+      .form-check-input:checked {
+        background-color: #a8a8a8 !important;
+        border-color: #a8a8a8 !important;
+      }
+      
+      
+      .form-select:focus,
+      .form-control:focus {
+        border-color: #a8a8a8 !important;
+        box-shadow: 0 0 0 0.25rem rgba(196, 91, 70, 0.25) !important;
+      }
+
+      .line-height-1 {
+        line-height: 1 !important;
+      }
+
+      ::selection,
+      ::-moz-selection {
+        background-color: #000 !important; 
+      }
+
+      :root {
+        --si-user-selection-color: #000;
+        --color-main: #a8a8a8;
+      }
+
+      .custom-audio-player button{
+        background-color: #a8a8a8 !important;
+      }
+
+      .custom-audio-player .custom-audio-player-icon{
+        color: #000 !important;
+      }
+
+      .custom-tooltip {
+        --bs-tooltip-bg: var(--color-main);
+      }
+
+      .btn-video:hover,
+      .btn-video:active {
+        background-color: #a8a8a8 !important;
+        border-color: #a8a8a8 !important;
+        box-shadow: 0 0 10px rgba(196, 91, 70, 0.5) !important;
+      }
+
+      .btn-video {
+        background-color: #000 !important;
+      }
+
