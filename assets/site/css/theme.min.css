@@ -6592,6 +6592,7 @@ fieldset:disabled .btn {
   display: block;
   padding-top: var(--si-aspect-ratio);
   content: "";
+  height: 360px !important;
 }
 .ratio > * {
   position: absolute;
